@@ -17,7 +17,8 @@ direction = 0   #AGENT DIRECTION
 
 #ROTATE
 def rotate(direction):
-    dir_value = '→' #DEFAULT WILL BE FACE RIGHT (SHOULD BE REPLACED BY PREV VALUE IF UNCHANGED)
+    #dir_value = '→' #DEFAULT WILL BE FACE RIGHT (SHOULD BE REPLACED BY PREV VALUE IF UNCHANGED)
+    dir_value = '↓'  # DEFAULT WILL BE FACE RIGHT (SHOULD BE REPLACED BY PREV VALUE IF UNCHANGED)
 
     if direction == 1:
         dir_value = '↑' #FACE UP
@@ -78,7 +79,8 @@ def init_maze(size, maze):
     #maze is the REFERENCE MAZE VALUE
 
     #maze[0][0] = '0'  # STARTING POINT AT 0,0 FACING RIGHT
-    maze[0][0] = '→' #STARTING POINT AT 0,0 FACING RIGHT
+    #maze[0][0] = '→' #STARTING POINT AT 0,0 FACING RIGHT
+    maze[0][0] = '↓'  # STARTING POINT AT 0,0 FACING RIGHT
 
     curr_x = 0
     curr_y = 0
@@ -128,6 +130,7 @@ def display_maze(size, maze):
 def level_0(pawn_x, pawn_y, maze):
     # pawn_x = 0
     # pawn_y = 0
+    rand_value = random.randint(1,2)
 
     if maze[pawn_x][pawn_y] == 'G':
         print("Found Gold at", (pawn_x + 1, pawn_y + 1))
@@ -137,12 +140,12 @@ def level_0(pawn_x, pawn_y, maze):
         return True #EXIT WHEN PIT IS STEPPED ON
     elif maze[pawn_x][pawn_y] == 'B':
         print("Found Beacon at", (pawn_x + 1, pawn_y + 1))
-        return False
+        #return False
     elif maze[pawn_x][pawn_y] == 'V':
         print("Node Visited at", (pawn_x + 1, pawn_y + 1))
         return False
 
-    print("Visiting at", (pawn_x + 1, pawn_y + 1))
+    print("Currently on", (pawn_x + 1, pawn_y + 1))
 
     #MARK VISITED
     maze[pawn_x][pawn_y] = 'V'
@@ -150,12 +153,21 @@ def level_0(pawn_x, pawn_y, maze):
     display_maze(len(maze), maze)
     print("*********************************")
 
+    #rand_value = 2
+
     #EXPLORE NEIGHBORS CLOCKWISE STARTING FROM THE ONE ON THE RIGHT
-    if ((pawn_x < len(maze) - 1 and level_0(pawn_x + 1, pawn_y, maze))
-        or (pawn_y > 0 and level_0(pawn_x, pawn_y - 1, maze))
-        or (pawn_x > 0 and level_0(pawn_x - 1, pawn_y, maze))
-        or (pawn_y < len(maze) - 1 and level_0(pawn_x, pawn_y + 1, maze))):
-        return True
+    if rand_value == 1: #TOP-DOWN LEFT-RIGHT
+        if ((pawn_x < len(maze) - 1 and level_0(pawn_x + 1, pawn_y, maze))
+            or (pawn_y > 0 and level_0(pawn_x, pawn_y - 1, maze))
+            or (pawn_x > 0 and level_0(pawn_x - 1, pawn_y, maze))
+            or (pawn_y < len(maze) - 1 and level_0(pawn_x, pawn_y + 1, maze))):
+            return True
+    elif rand_value == 2: #LEFT-RIGHT TOP-DOWN
+        if ((pawn_y < len(maze) - 1 and level_0(pawn_x, pawn_y + 1, maze))
+            or (pawn_x > 0 and level_0(pawn_x - 1, pawn_y, maze))
+            or (pawn_y > 0 and level_0(pawn_x, pawn_y - 1, maze))
+            or (pawn_x < len(maze) - 1 and level_0(pawn_x + 1, pawn_y, maze))):
+            return True
 
     return False
 #END LEVEL 0
