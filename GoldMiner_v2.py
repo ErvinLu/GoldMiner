@@ -1,6 +1,10 @@
 import random
 
+from Level_0 import *
+from Level_2 import *
+
 #GLOBAL
+size = 0    #MATRIX SIZE
 move_x = 0  #PATH X
 move_y = 0  #PATH Y
 curr_x = 0  #CURRENT X POSITION AGENT
@@ -89,6 +93,8 @@ def init_maze(size, maze):
     global gold_y
     global end
 
+    global pit_loc  #FORGOT IF NEEDED 7/2/2019
+
     #GOLD POSITION
     gold_x = int(input("Gold X Location: "))
     gold_y = int(input("Gold Y Location: "))
@@ -127,49 +133,49 @@ def display_maze(size, maze):
 # END DISPLAY MAZE
 
 #LEVEL 0
-def level_0(pawn_x, pawn_y, maze):
-    # pawn_x = 0
-    # pawn_y = 0
-    rand_value = random.randint(1,2)
-
-    if maze[pawn_x][pawn_y] == 'G':
-        print("Found Gold at", (pawn_x + 1, pawn_y + 1))
-        return True #EXIT WHEN GOLD IS FOUND
-    elif maze[pawn_x][pawn_y] == 'P':
-        print("Found Pit at", (pawn_x + 1, pawn_y + 1))
-        return True #EXIT WHEN PIT IS STEPPED ON
-    elif maze[pawn_x][pawn_y] == 'B':
-        print("Found Beacon at", (pawn_x + 1, pawn_y + 1))
-        #return False
-    elif maze[pawn_x][pawn_y] == 'V':
-        print("Node Visited at", (pawn_x + 1, pawn_y + 1))
-        return False
-
-    print("Currently on", (pawn_x + 1, pawn_y + 1))
-
-    #MARK VISITED
-    maze[pawn_x][pawn_y] = 'V'
-
-    display_maze(len(maze), maze)
-    print("*********************************")
-
-    #rand_value = 2
-
-    #EXPLORE NEIGHBORS CLOCKWISE STARTING FROM THE ONE ON THE RIGHT
-    if rand_value == 1: #TOP-DOWN LEFT-RIGHT
-        if ((pawn_x < len(maze) - 1 and level_0(pawn_x + 1, pawn_y, maze))
-            or (pawn_y > 0 and level_0(pawn_x, pawn_y - 1, maze))
-            or (pawn_x > 0 and level_0(pawn_x - 1, pawn_y, maze))
-            or (pawn_y < len(maze) - 1 and level_0(pawn_x, pawn_y + 1, maze))):
-            return True
-    elif rand_value == 2: #LEFT-RIGHT TOP-DOWN
-        if ((pawn_y < len(maze) - 1 and level_0(pawn_x, pawn_y + 1, maze))
-            or (pawn_x > 0 and level_0(pawn_x - 1, pawn_y, maze))
-            or (pawn_y > 0 and level_0(pawn_x, pawn_y - 1, maze))
-            or (pawn_x < len(maze) - 1 and level_0(pawn_x + 1, pawn_y, maze))):
-            return True
-
-    return False
+# def level_0(pawn_x, pawn_y, maze):
+#     # pawn_x = 0
+#     # pawn_y = 0
+#     rand_value = random.randint(1,2)
+#
+#     if maze[pawn_x][pawn_y] == 'G':
+#         print("Found Gold at", (pawn_x + 1, pawn_y + 1))
+#         return True #EXIT WHEN GOLD IS FOUND
+#     elif maze[pawn_x][pawn_y] == 'P':
+#         print("Found Pit at", (pawn_x + 1, pawn_y + 1))
+#         return True #EXIT WHEN PIT IS STEPPED ON
+#     elif maze[pawn_x][pawn_y] == 'B':
+#         print("Found Beacon at", (pawn_x + 1, pawn_y + 1))
+#         #return False
+#     elif maze[pawn_x][pawn_y] == 'V':
+#         print("Node Visited at", (pawn_x + 1, pawn_y + 1))
+#         return False
+#
+#     print("Currently on", (pawn_x + 1, pawn_y + 1))
+#
+#     #MARK VISITED
+#     maze[pawn_x][pawn_y] = 'V'
+#
+#     display_maze(len(maze), maze)
+#     print("*********************************")
+#
+#     #rand_value = 2
+#
+#     #EXPLORE NEIGHBORS CLOCKWISE STARTING FROM THE ONE ON THE RIGHT
+#     if rand_value == 1: #TOP-DOWN LEFT-RIGHT
+#         if ((pawn_x < len(maze) - 1 and level_0(pawn_x + 1, pawn_y, maze))
+#             or (pawn_y > 0 and level_0(pawn_x, pawn_y - 1, maze))
+#             or (pawn_x > 0 and level_0(pawn_x - 1, pawn_y, maze))
+#             or (pawn_y < len(maze) - 1 and level_0(pawn_x, pawn_y + 1, maze))):
+#             return True
+#     elif rand_value == 2: #LEFT-RIGHT TOP-DOWN
+#         if ((pawn_y < len(maze) - 1 and level_0(pawn_x, pawn_y + 1, maze))
+#             or (pawn_x > 0 and level_0(pawn_x - 1, pawn_y, maze))
+#             or (pawn_y > 0 and level_0(pawn_x, pawn_y - 1, maze))
+#             or (pawn_x < len(maze) - 1 and level_0(pawn_x + 1, pawn_y, maze))):
+#             return True
+#
+#     return False
 #END LEVEL 0
 
 
@@ -177,6 +183,7 @@ def main():
     global maze
     global start
     global end
+    global size
     size = int(input("Enter playing field size: "))
     maze = [[0 for x in range(size)] for y in range(size)] #INITIALIZE MAZE
 
@@ -184,8 +191,40 @@ def main():
     print("INITIAL MAZE")
     display_maze(size, init_maze_res)
 
+    #LEVEL 0
+    global stor_pawn_x
+    global stor_pawn_y
+    global stor_pawn_dir
     print("*********************************")
     level_0(0,0,init_maze_res)
+
+    stor_pawn_x.reverse()
+    stor_pawn_y.reverse()
+    stor_pawn_dir.reverse()
+
+    for i in range(len(stor_pawn_x)):
+        if stor_pawn_dir[i] == 1:
+            init_maze_res[stor_pawn_x[i]][stor_pawn_y[i]] = '↑'
+        if stor_pawn_dir[i] == 2:
+            init_maze_res[stor_pawn_x[i]][stor_pawn_y[i]] = '↓'
+        if stor_pawn_dir[i] == 3:
+            init_maze_res[stor_pawn_x[i]][stor_pawn_y[i]] = '→'
+        if stor_pawn_dir[i] == 4:
+            init_maze_res[stor_pawn_x[i]][stor_pawn_y[i]] = '←'
+
+        print("ITERATION", (i))
+        display_maze(size, init_maze_res)
+        print("*********************************")
+
+    #END LEVEL 0
+
+    # #LEVEL 2
+    # print("*********************************")
+    # level_2 = a_star()
+    # level_2.init_grid(size, pit_loc, start, end)
+    # path = level_2.level_2()
+    # print(path)
+    # #END LEVEL 2
 
     # while ((curr_x < size) and (curr_y < size)) or (init_maze_res[curr_x][curr_y] is not 'P' or init_maze_res[curr_x][curr_y] is not 'G'):
     #     move(size, 1, init_maze_res)
